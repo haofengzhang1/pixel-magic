@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PixelMagic - Transform Your Memories with AI</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#000;color:#fff;min-height:100vh}
+    .hero{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:60px 20px;text-align:center}
+    h1{font-size:4em;margin-bottom:20px;animation:glow 2s ease-in-out infinite alternate}
+    @keyframes glow{from{ text-shadow:0 0 10px #fff,0 0 20px #667eea } to{ text-shadow:0 0 20px #fff,0 0 30px #764ba2 }}
+    .container{max-width:1400px;margin:0 auto;padding:40px 20px}
+
+    .photographers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:30px;margin:40px 0}
+    .photographer-card{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);border-radius:20px;overflow:hidden;transition:.3s;cursor:pointer}
+    .photographer-card:hover{transform:translateY(-10px);box-shadow:0 20px 40px rgba(102,126,234,.4)}
+    .photographer-image{width:100%;height:250px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;justify-content:center;font-size:4em}
+    .photographer-info{padding:20px}
+    .photographer-name{font-size:1.5em;margin-bottom:10px}
+    .photographer-style{color:#667eea;margin-bottom:10px}
+    .rating{color:#ffd700;margin-bottom:10px}
+    .price{font-size:1.2em;color:#4CAF50}
+
+    .upload-section{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);border-radius:20px;padding:40px;margin:40px 0;text-align:center}
+    .upload-box{border:3px dashed #667eea;border-radius:20px;padding:60px 20px;margin:20px 0;transition:.3s;cursor:pointer}
+    .upload-box:hover{border-color:#764ba2;background:rgba(102,126,234,.1)}
+
+    .before-after{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:30px 0}
+    .image-preview{background:#2d2d2d;border-radius:15px;padding:20px;min-height:300px;display:flex;align-items:center;justify-content:center;color:#666;position:relative;overflow:hidden}
+    .image-preview.checker{
+      background:
+        linear-gradient(45deg,#222 25%,transparent 25%) -10px 0/20px 20px,
+        linear-gradient(-45deg,#222 25%,transparent 25%) -10px 0/20px 20px,
+        linear-gradient(45deg,transparent 75%,#222 75%) -10px 0/20px 20px,
+        linear-gradient(-45deg,transparent 75%,#222 75%) -10px 0/20px 20px,
+        #1a1a1a;
+    }
+
+    .style-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;margin:30px 0}
+    .style-card{background:linear-gradient(135deg,#2d2d2d 0%,#1a1a1a 100%);border-radius:15px;padding:20px;text-align:center;cursor:pointer;transition:.3s;border:2px solid transparent}
+    .style-card:hover{border-color:#667eea;transform:scale(1.05)}
+    .style-card.selected{border-color:#764ba2;background:linear-gradient(135deg,#667eea20 0%,#764ba220 100%)}
+    .style-icon{font-size:3em;margin-bottom:10px}
+
+    button{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;padding:15px 40px;border-radius:30px;font-size:18px;font-weight:bold;cursor:pointer;transition:.3s;margin:10px}
+    button:hover{transform:scale(1.05);box-shadow:0 10px 30px rgba(102,126,234,.4)}
+
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin:40px 0}
+    .stat-card{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);border-radius:15px;padding:30px;text-align:center}
+    .stat-number{font-size:3em;color:#667eea;font-weight:bold}
+    .stat-label{color:#999;margin-top:10px}
+    .tag{display:inline-block;background:#667eea;color:#fff;padding:5px 15px;border-radius:20px;margin:5px;font-size:.9em}
+
+    #recentGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px}
+    .recent-card{aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#111;display:flex;align-items:center;justify-content:center}
+    .recent-card img{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* portfolios grid */
+    #portfolioGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+    .pf-card{background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 100%);border-radius:14px;overflow:hidden}
+    .pf-cover{width:100%;height:160px;background:#111;display:flex;align-items:center;justify-content:center}
+    .pf-cover img{width:100%;height:100%;object-fit:cover;display:block}
+    .pf-body{padding:12px}
+    .pf-meta{color:#aaa;font-size:12px;margin:4px 0}
+    .pf-actions{display:flex;gap:8px;margin-top:8px}
+    .btn{padding:10px 12px;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+    .btn-danger{background:linear-gradient(135deg,#ff6b6b,#ee5253)}
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>✨ PixelMagic</h1>
+    <p style="font-size:1.5em;margin-bottom:20px;">Transform Your Photos into Art with AI</p>
+    <p>Graduation • Weddings • Portraits • Events</p>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat-card"><div class="stat-number">500+</div><div class="stat-label">Pro Photographers</div></div>
+      <div class="stat-card"><div class="stat-number">10K+</div><div class="stat-label">Happy Clients</div></div>
+      <div class="stat-card"><div class="stat-number">15</div><div class="stat-label">AI Styles</div></div>
+      <div class="stat-card"><div class="stat-number">24h</div><div class="stat-label">Delivery Time</div></div>
+    </div>
+
+    <h2 style="font-size:2.5em;margin:40px 0;text-align:center;">🎓 Featured Graduation Photographers</h2>
+    <div class="photographers-grid">
+        <!-- 1. Amanda Macchia Photography -->
+        <a class="photographer-card" href="https://www.amandamacchiaphoto.com/" target="_blank" rel="noopener">
+          <div class="photographer-image">📸</div>
+          <div class="photographer-info">
+            <div class="photographer-name">Amanda Macchia</div>
+            <div class="photographer-style">Boston-area Graduation Specialist</div>
+            <div class="rating">⭐⭐⭐⭐⭐ (5.0/5)</div>
+            <div class="tag">Graduation Sessions</div>
+            <div class="tag">College Portraits</div>
+            <div class="price">Custom / Enquiry</div>
+          </div>
+        </a>
+      
+        <!-- 2. Adriana Arguijo Photography -->
+        <a class="photographer-card" href="https://www.adrianaarguijophotography.com/" target="_blank" rel="noopener">
+          <div class="photographer-image">📷</div>
+          <div class="photographer-info">
+            <div class="photographer-name">Adriana Arguijo</div>
+            <div class="photographer-style">Vibrant College Grad Portraits (East MA)</div>
+            <div class="rating">⭐⭐⭐⭐⭐ (5.0/5)</div>
+            <div class="tag">Graduation</div>
+            <div class="tag">Senior Portraits</div>
+            <div class="price">From $400/session</div>
+          </div>
+        </a>
+      
+        <!-- 3. Christine Strickland Photography -->
+        <a class="photographer-card" href="https://christinestricklandphotography.com/" target="_blank" rel="noopener">
+          <div class="photographer-image">📸</div>
+          <div class="photographer-info">
+            <div class="photographer-name">Christine Strickland</div>
+            <div class="photographer-style">Graduation Portraits (Hopkinton, MA)</div>
+            <div class="rating">⭐⭐⭐⭐⭐ (4.9/5)</div>
+            <div class="tag">Cap & Gown</div>
+            <div class="tag">High School & College</div>
+            <div class="price">Custom / Enquiry</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="upload-section">
+      <h2 style="font-size:2.5em;margin-bottom:30px;">🎨 Transform Your Photos with AI Magic</h2>
+      <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+        <div style="font-size:4em;margin-bottom:20px;">📤</div>
+        <h3 style="font-size:1.5em;margin-bottom:10px;">Drop Your Photos Here</h3>
+        <p style="color:#999;">or click to browse</p>
+        <input type="file" id="fileInput" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)">
+      </div>
+
+      <div class="before-after">
+        <div class="image-preview" id="previewOriginal"><div>Original Photo</div></div>
+        <div class="image-preview checker" id="previewResult"><div>AI Transformed</div></div>
+      </div>
+
+      <h3 style="font-size:1.8em;margin:30px 0;">Choose Your AI Style</h3>
+      <div class="style-options">
+        <div class="style-card" onclick="selectStyle(this,'anime')"><div class="style-icon">🎌</div><div>Anime</div></div>
+        <div class="style-card" onclick="selectStyle(this,'oil')"><div class="style-icon">🎨</div><div>Oil Painting</div></div>
+        <div class="style-card" onclick="selectStyle(this,'watercolor')"><div class="style-icon">🖌️</div><div>Watercolor</div></div>
+        <div class="style-card" onclick="selectStyle(this,'pixar')"><div class="style-icon">🦸</div><div>Pixar Style</div></div>
+        <div class="style-card" onclick="selectStyle(this,'cyberpunk')"><div class="style-icon">🤖</div><div>Cyberpunk</div></div>
+        <div class="style-card" onclick="selectStyle(this,'vintage')"><div class="style-icon">📷</div><div>Vintage</div></div>
+        <div class="style-card" onclick="selectStyle(this,'sketch')"><div class="style-icon">✏️</div><div>Pencil Sketch</div></div>
+        <div class="style-card" onclick="selectStyle(this,'fantasy')"><div class="style-icon">🧙</div><div>Fantasy</div></div>
+      </div>
+
+      <button onclick="transformImage()">🪄 Transform with AI</button>
+      <button onclick="enhanceImage()">✨ Auto Enhance</button>
+      <button onclick="removeBackground()">🎯 Remove Background</button>
+    </div>
+
+    <h2 style="font-size:2.5em;margin:40px 0;text-align:center;">📸 Recent Transformations</h2>
+    <div id="recentGrid"></div>
+
+    <div class="upload-section">
+      <h2 style="font-size:2.5em;margin-bottom:30px;">💼 Create Your Portfolio</h2>
+      <p style="color:#999;margin-bottom:30px;">Showcase your best moments in a stunning AI-enhanced portfolio</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin:30px 0;">
+        <button onclick="createPortfolio()">📁 New Portfolio</button>
+        <button onclick="addToPortfolio()">➕ Add Photos</button>
+        <button onclick="sharePortfolio()">🔗 Share Link</button>
+        <button onclick="downloadPortfolio()">💾 Download All</button>
+      </div>
+
+      <h2 style="font-size:2.2em;margin:40px 0 16px;">🗂️ Your Portfolios</h2>
+      <div id="portfolioGrid"></div>
+    </div>
+  </div>
+
+  <script>
+    // ====== 后端地址 ======
+    const API_BASE = 'http://127.0.0.1:8000';
+
+    // ====== 页面状态 ======
+    let selectedStyle = null;
+    let selectedPhotographer = null;
+    let currentFile = null;
+    let recentImages = [];          // 完整可访问 URL
+    let currentPortfolioId = null;  // 作品集 ID（最近创建/操作）
+
+    // ====== 小工具 ======
+    const bust = url => `${url}${url.includes('?')?'&':'?'}t=${Date.now()}`;
+
+    function selectPhotographer(name){
+      selectedPhotographer = name;
+      alert(`🎉 Great choice! ${name} is available for booking. Would you like to schedule a consultation?`);
+    }
+    function selectStyle(el,style){
+      document.querySelectorAll('.style-card').forEach(c=>c.classList.remove('selected'));
+      el.classList.add('selected'); selectedStyle = style;
+    }
+
+    function handleFiles(files){
+      if(!files || !files.length) return;
+      currentFile = files[0];
+      const reader = new FileReader();
+      reader.onload = e=>{
+        document.getElementById('previewOriginal').innerHTML =
+          `<img src="${e.target.result}" style="max-width:100%;border-radius:12px" />`;
+      };
+      reader.readAsDataURL(currentFile);
+      document.getElementById('previewResult').innerHTML = `<div>AI Transformed</div>`;
+      alert(`📸 ${files.length} photo(s) uploaded successfully! Ready for AI transformation.`);
+    }
+
+    function showProcessing(text){
+      document.getElementById('previewResult').innerHTML =
+        `<div style="display:flex;align-items:center;gap:10px;"><span style="font-size:1.4em;">⏳</span><span>${text||'Processing...'}</span></div>`;
+    }
+
+    function pushRecent(fullUrl){
+      recentImages.unshift(fullUrl);
+      recentImages = recentImages.slice(0,12);
+      renderRecent();
+    }
+    function renderRecent(){
+      const grid = document.getElementById('recentGrid');
+      grid.innerHTML = recentImages.map(u => `
+        <div class="recent-card"><img loading="lazy" src="${bust(u)}"/></div>
+      `).join('');
+    }
+
+    // === AI 变换 ===
+    async function transformImage() {
+      if (!selectedStyle) return alert('Please select an AI style first!');
+      if (!currentFile) return alert('Please upload a photo first!');
+      showProcessing(`Transforming your photo to "${selectedStyle}" style...`);
+      try {
+        const fd = new FormData();
+        fd.append('prompt', `Turn this photo into ${selectedStyle} style. Keep identity, high quality, clean background, detailed textures.`);
+        fd.append('image', currentFile);
+
+        const r = await fetch(`${API_BASE}/api/edit`, { method: 'POST', body: fd });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || JSON.stringify(data));
+
+        let url = data.url || '';
+        if (!/^https?:\/\//i.test(url)) url = `${API_BASE}${url}`;
+        document.getElementById('previewResult').innerHTML =
+          `<img src="${bust(url)}" style="max-width:100%; border-radius:12px;" />`;
+        pushRecent(url);
+
+      } catch (e) {
+        console.error(e);
+        alert('Edit failed: ' + e.message);
+        document.getElementById('previewResult').innerHTML =
+          `<div style="color:#bbb;">Failed. Please try again.</div>`;
+      }
+    }
+
+    // ====== 放大增强 ======
+    async function enhanceImage(){
+      if(!currentFile) return alert('Please upload a photo first!');
+      showProcessing('Enhancing your photo (upscaling 2x)...');
+      try{
+        const fd = new FormData();
+        fd.append('image', currentFile);
+        fd.append('scale','2');
+        const r = await fetch(`${API_BASE}/api/upscale`, {method:'POST', body:fd});
+        const data = await r.json();
+        if(!r.ok) throw new Error(data.detail || JSON.stringify(data));
+        const url = data.url;
+        document.getElementById('previewResult').innerHTML =
+          `<img src="${bust(url)}" style="max-width:100%;border-radius:12px"/>`;
+        pushRecent(url);
+      }catch(e){
+        console.error(e);
+        alert('Upscale failed: '+e.message);
+        document.getElementById('previewResult').innerHTML = `<div style="color:#bbb;">Failed. Please try again.</div>`;
+      }
+    }
+
+    // ====== 抠图 ======
+    async function removeBackground(){
+      if(!currentFile) return alert('Please upload a photo first!');
+      showProcessing('Removing background...');
+      try{
+        const fd = new FormData();
+        fd.append('image', currentFile);
+        const r = await fetch(`${API_BASE}/api/remove_bg`, {method:'POST', body:fd});
+        const data = await r.json();
+        if(!r.ok) throw new Error(data.detail || JSON.stringify(data));
+        const url = data.url;
+        document.getElementById('previewResult').innerHTML =
+          `<img src="${bust(url)}" style="max-width:100%;border-radius:12px"/>`;
+        pushRecent(url);
+      }catch(e){
+        console.error(e);
+        alert('Background removal failed: '+e.message);
+        document.getElementById('previewResult').innerHTML = `<div style="color:#bbb;">Failed. Please try again。</div>`;
+      }
+    }
+
+    // ====== 作品集：创建 / 添加 / 分享 / 下载 ======
+    async function createPortfolio() {
+      try {
+        const r = await fetch(`${API_BASE}/api/portfolio/create`, { method: 'POST' });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || JSON.stringify(data));
+        currentPortfolioId = data.id;
+        alert(`✅ Portfolio created: ${currentPortfolioId}\nShare: ${data.page}`);
+        loadPortfolios(); // 刷新列表
+      } catch (e) {
+        alert('Failed to create portfolio: ' + (e.message || JSON.stringify(e)));
+      }
+    }
+
+    async function addToPortfolio() {
+      if (!currentPortfolioId) return alert('Create a portfolio first.');
+      if (recentImages.length === 0) return alert('No images to add yet.');
+
+      const pick = recentImages.slice(0, 6); // 取最近 6 张
+      try {
+        const fd = new FormData();
+        // URL -> File（字段名必须是 files，后端按 List[UploadFile] 接）
+        for (const [i, imgUrl] of pick.entries()) {
+          const res = await fetch(imgUrl);
+          const blob = await res.blob();
+          const ext = (blob.type||'image/png').split('/')[1] || 'png';
+          const file = new File([blob], `recent_${i}.${ext}`, { type: blob.type || 'image/png' });
+          fd.append('files', file);
+        }
+        const r = await fetch(`${API_BASE}/api/portfolio/${currentPortfolioId}/add`, {
+          method: 'POST', body: fd
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || JSON.stringify(data));
+        alert(`✅ Added ${pick.length} photo(s) to portfolio ${currentPortfolioId}.`);
+        loadPortfolios(); // 刷新列表
+      } catch (e) {
+        alert('Add failed: ' + e.message);
+      }
+    }
+
+    function sharePortfolio(){
+      if(!currentPortfolioId) return alert('Create a portfolio first.');
+      const share = `${API_BASE}/files/portfolios/${currentPortfolioId}/index.html`;
+      navigator.clipboard?.writeText(share).catch(()=>{});
+      alert(`🔗 Share link copied:\n${share}`);
+    }
+
+    function downloadPortfolio(){
+      if(!currentPortfolioId) return alert('Create a portfolio first.');
+      const url = `${API_BASE}/api/portfolio/${currentPortfolioId}/zip`;
+      window.open(url,'_blank');
+    }
+
+    // ====== 作品集：可视化 / 删除 ======
+    function openShare(url){ window.open(url,'_blank'); }
+    function copyLink(url){
+      navigator.clipboard?.writeText(url).then(()=>alert('🔗 Link copied:\n'+url))
+        .catch(()=>prompt('Copy link:', url));
+    }
+    async function deletePortfolio(pid){
+      if(!confirm(`Delete portfolio ${pid}? This cannot be undone.`)) return;
+      try{
+        const r = await fetch(`${API_BASE}/api/portfolio/${pid}`, { method:'DELETE' });
+        const data = await r.json().catch(()=>({}));
+        if(!r.ok) throw new Error(data.detail || JSON.stringify(data));
+        if(currentPortfolioId === pid) currentPortfolioId = null;
+        loadPortfolios();
+      }catch(e){
+        alert('Delete failed: ' + (e.message || e));
+      }
+    }
+
+    async function loadPortfolios(){
+      try{
+        const r = await fetch(`${API_BASE}/api/portfolios`);
+        const data = await r.json();
+        const grid = document.getElementById('portfolioGrid');
+        if(!grid) return;
+
+        if(!r.ok) throw new Error(data.detail || JSON.stringify(data));
+
+        const cards = (data.items||[]).map(it=>{
+          const coverHtml = it.cover
+            ? `<img src="${bust(it.cover)}" alt="cover">`
+            : `<div style="color:#666">No Cover</div>`;
+          return `
+            <div class="pf-card">
+              <div class="pf-cover">
+                ${coverHtml}
+              </div>
+              <div class="pf-body">
+                <div style="font-weight:600">#${it.id}</div>
+                <div class="pf-meta">${it.count||0} item(s)</div>
+                <div class="pf-actions">
+                  <button class="btn" onclick="openShare('${it.share_url}')">View</button>
+                  <button class="btn" onclick="copyLink('${it.share_url}')">Copy</button>
+                  <button class="btn btn-danger" onclick="deletePortfolio('${it.id}')">Delete</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        grid.innerHTML = cards || `<div style="color:#888">No portfolios yet. Create one above ⬆️</div>`;
+      }catch(e){
+        console.error(e);
+        const grid = document.getElementById('portfolioGrid');
+        if(grid) grid.innerHTML = `<div style="color:#888">Failed to load portfolios.</div>`;
+      }
+    }
+
+    // 页面加载
+    window.addEventListener('load', ()=>{
+      loadPortfolios();
+
+      // 数字动画（装饰）
+      const stats = document.querySelectorAll('.stat-number');
+      stats.forEach(stat=>{
+        const isPlus = /\+$/.test(stat.textContent);
+        const target = parseInt(stat.textContent);
+        let current = 0; const inc = Math.max(1,Math.floor(target/50));
+        const t = setInterval(()=>{
+          current += inc;
+          if(current>=target){ stat.textContent = target + (isPlus?'+':''); clearInterval(t); }
+          else{ stat.textContent = current + (isPlus?'+':''); }
+        },30);
+      });
+    });
+  </script>
+</body>
+</html>
